@@ -40,52 +40,48 @@ print(len(logg_voltage))
 # sp - start point
 # ep - end point
 def graphic_find(sp, ep):
+    counter = 0
+    point = sp
     mass = []  # На выходе в этот массив запишутся все найденные и нормализованные данные зарядок
-    counter_c = 0  # Счетчик зарядок
     date_of = []  # В этом массиве хранятся дата и время каждой зарядки
-    for point in range(sp, ep - 1):
-
-        X = []
-        Curr = []
-        Volt = []
-        I1 = logg_current[point]
-        I2 = logg_current[point + 1]
-
+    while point < ep - 1:
+        x = []
+        curr = []
+        volt = []
+        i1 = logg_current[point]
+        i2 = logg_current[point + 1]
         # Находим точку начала зарядки по значению и производной от тока
-        if I2 > 500 and I2 - I1 > 20: #600
+        if i2 > 500 and i2 - i1 > 20:
             print("___________________________")
             print("Начало: " + str(logg_date[point][:]))
-            counter_points = 0   #Счетчик точек
-            for end_point in range(point, ep - 1):
-                #Вектор X содержит массив данных времени для каждой зарядки (пока не используется)
-                X.append(logg_date[end_point])
-                Curr.append(logg_current[end_point])
-                Volt.append(logg_voltage[end_point])
-
-                I1 = logg_current[end_point]
-                I2 = logg_current[end_point + 1]
-                U1 = logg_current[end_point]
-                U2 = logg_current[end_point + 1]
-                counter_points += 1
-                if I2 < 500 and U2 - U1 < -30:
+            end_point = point
+            c_po = 0
+            while end_point < ep - 1:
+                c_po +=1
+                # Вектор X содержит массив данных времени для каждой зарядки (пока не используется)
+                x.append(logg_date[end_point])
+                curr.append(logg_current[end_point])
+                volt.append(logg_voltage[end_point])
+                i1 = logg_current[end_point]
+                i2 = logg_current[end_point + 1]
+                u1 = logg_current[end_point]
+                u2 = logg_current[end_point + 1]
+                if i2 < 500 and u2 - u1 < -30:
                     print("Конец: " + str(logg_date[end_point][:]))
                     print("___________________________")
-
-                    if counter_points > 30:
-                        #Добавляем в конец массива нормализованные данные тока и напряжения от новой найденной зарядки
-                        mass.append([Curr, Volt])
-                        date_of.append([])
-                        date_of[counter_c].append(logg_date[point][:])
-                        date_of[counter_c].append(logg_date[end_point][:])
-                        counter_c += 1
+                    if c_po > 30:
+                        mass.append([curr, volt])
+                        counter += 1
+                    point = end_point
                     break
-    print("Найдено зарядок: ", counter_c)
+                end_point += 1
+        point += 1
+    print("Найдено зарядок (>30 точек): " + str(counter))
     print("")
-    return mass
+    return mass, counter
 
 # nn - no classification, no normalization database
-nn_base = graphic_find(0, 10000)
-
+nn_base, cntr = graphic_find(500, 110942)
 
 def good_btn_clicked(event, sop):
     print("Правильная зарядка")
@@ -108,6 +104,7 @@ def hz_btn_clicked(event, sop):
     print("Не знаю")
     global cnt
     cnt += 1
+
     axes[0].clear()
     axes[1].clear()
     axes[0].grid(True)
@@ -147,6 +144,8 @@ good_button = Button(axes_good_btn_add, 'Правильная')
 cnt = 0
 axes[0].grid(True)
 axes[1].grid(True)
+axes[0].set_title("Ток")
+axes[1].set_title("Напряжение")
 axes[0].plot(nn_base[0][0], "limegreen")
 axes[1].plot(nn_base[0][1], "darkviolet")
 
