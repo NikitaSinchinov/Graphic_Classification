@@ -4,7 +4,7 @@ import xlrd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
-exel_data_file = xlrd.open_workbook('log_data_21.xlsx')
+exel_data_file = xlrd.open_workbook('log_data_4.xlsx')
 sheet = exel_data_file.sheet_by_index(0)
 
 row_nubmer = sheet.nrows
@@ -81,7 +81,7 @@ def graphic_find(sp, ep):
     return mass, counter
 
 # nn - no classification, no normalization database
-nn_base, cntr = graphic_find(500, 110942)
+nn_base, cntr = graphic_find(0, 143300)
 
 def good_btn_clicked(event, sop):
     print("Правильная зарядка")
@@ -96,6 +96,8 @@ def good_btn_clicked(event, sop):
     axes[1].clear()
     axes[0].grid(True)
     axes[1].grid(True)
+    axes[0].set_title("Ток")
+    axes[1].set_title("Напряжение")
     axes[0].plot(nn_base[cnt][0], "limegreen")
     axes[1].plot(nn_base[cnt][1], "darkviolet")
     plt.draw()
@@ -109,6 +111,8 @@ def hz_btn_clicked(event, sop):
     axes[1].clear()
     axes[0].grid(True)
     axes[1].grid(True)
+    axes[0].set_title("Ток")
+    axes[1].set_title("Напряжение")
     axes[0].plot(nn_base[cnt][0], "limegreen")
     axes[1].plot(nn_base[cnt][1], "darkviolet")
     plt.draw()
@@ -125,6 +129,8 @@ def bad_btn_clicked(event, sop):
     axes[1].clear()
     axes[0].grid(True)
     axes[1].grid(True)
+    axes[0].set_title("Ток")
+    axes[1].set_title("Напряжение")
     axes[0].plot(nn_base[cnt][0], "limegreen")
     axes[1].plot(nn_base[cnt][1], "darkviolet")
     plt.draw()
@@ -155,4 +161,3 @@ hz_button.on_clicked(lambda event: hz_btn_clicked(event, cnt))
 bad_button.on_clicked(lambda event: bad_btn_clicked(event, cnt))
 
 plt.show()
-
